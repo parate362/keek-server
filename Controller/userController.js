@@ -211,7 +211,6 @@ if (!accountSid || !authToken) {
 
   exports.createUser = async (req, res) => {
     try {
-        console.log(req.body, "---- log 200 ----");
       const { name, email, password } = req.body;
       console.log(req.body, "---- log 205 ----");
   
@@ -243,14 +242,19 @@ if (!accountSid || !authToken) {
         data: newUser,
       });
     } catch (error) {
-      console.error("Error in createUser:", error);
-      return res.status(500).json({
-        status: false,
-        statuscode: 500,
-        message: "Something went wrong!",
-      });
+      if (error.code === 11000) {
+        return res.status(400).json({
+          status: false,
+          message: 'Mobile number already exists',
+        }) } else {
+          return res.status(500).json({
+            status: false,
+            message: 'Something went wrong',
+          })
     }
   };
+  }
+   
 
   exports.signin = async (req, res) => {
     const { email, password } = req.body;

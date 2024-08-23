@@ -1,10 +1,10 @@
 const router = require('express').Router()
 
 const { createUser, signin, SendOTPToMobile, verifyAndSignUpWithMobile, verifyOTP, sendOtp, verifyEmail, resetemailPassword, resetmobilePassword } = require('../Controller/userController')
-const { validateUser, validate } = require('../middleware/validators')
 
 
-router.post('/register-email',validateUser, validate,  createUser)
+
+router.post('/register-email', createUser)
 router.post('/send-email-otp', sendOtp);
 router.post('/verify-email-otp', verifyEmail)
 router.post('/signin-email', signin)
