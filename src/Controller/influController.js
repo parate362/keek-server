@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs"); 
 const User = require("../model/Influencer");
 const VerificationToken = require("../model/verificationToken");
+const jwt = require("jsonwebtoken");
 
 require("dotenv").config();
 
@@ -126,3 +127,27 @@ if (!accountSid || !authToken) {
     }
   };
   }
+
+
+  exports.loginInfluencer = async (req, res) => {
+    const { email, password } = req.body;
+    console.log(req.body);
+    if (!email.trim() || !password.trim())
+      return sendError(res, "email/password is missing!");
+  
+    const user = await Influencer.findOne({ email });
+    if (!user) return sendError(res, "User not found!");
+  
+    const isMatched = await user.comparePassword(password);
+    if (!isMatched) return sendError(res, "email/password does not matched");
+  
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+  
+    res.json({
+      success: true,
+      user: { name: user.name, email: user.email, id: user._id, token },
+    });
+  };
+  
